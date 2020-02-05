@@ -29,7 +29,7 @@ db.serialize(function () {
 
 	// Setter inn testbrukere i brukertabell
 	var stmt = db.prepare('INSERT INTO bruker VALUES ((?), (?), (?), (?))')
-	
+
 	stmt.run("test@test.no", "sdfaseldjasdg", "test", "")
 	stmt.run("test2@test.no", "sdelkfjalkja", "test2", "")
 
@@ -57,11 +57,11 @@ app.get(['/diktsamling/*'], function (req, res)
 
 		//Deler opp * biten av urlen på /
 		var args = req.params[0].split("/")
-		
-		
+
+
 		// Åpner databasen og kjører opperasjoner i serie avhengig av argument 0
 		db = new sqlite3.Database('diktsamling.db')
-		
+
 		db.serialize(function ()
 		{
 			switch(args[0])
@@ -74,7 +74,7 @@ app.get(['/diktsamling/*'], function (req, res)
 						db.all(`SELECT * FROM dikt, bruker WHERE `
 							+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 						{
-							
+
 							response += formater.dikt(rows)
 							res.send(response)
 						})
@@ -85,7 +85,7 @@ app.get(['/diktsamling/*'], function (req, res)
 						db.all(`SELECT * FROM dikt, bruker WHERE diktid='${args[1]}' AND `
 							+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 						{
-							
+
 							response += formater.dikt(rows)
 							res.send(response)
 						})
