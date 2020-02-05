@@ -5,6 +5,7 @@ const app = express()
 const port = 3000
 
 
+var db = new sqlite3.Database('diktsamling.db')
 
 // GET reqest til diktdatabase
 app.get(['/diktsamling/*'], function (req, res)
@@ -20,8 +21,6 @@ app.get(['/diktsamling/*'], function (req, res)
 		var args = req.params[0].split("/")
 
 
-		// Åpner databasen og kjører opperasjoner i serie avhengig av argument 0
-		db = new sqlite3.Database('diktsamling.db')
 
 		db.serialize(function ()
 		{
@@ -62,7 +61,6 @@ app.get(['/diktsamling/*'], function (req, res)
 					break
 			}
 		})
-		db.close()
 	}
 })
 
