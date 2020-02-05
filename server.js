@@ -1,6 +1,5 @@
 const express = require('express')
 const sqlite3 = require('sqlite3').verbose()
-const formater = require('./formater')
 
 const app = express()
 const port = 3000
@@ -71,22 +70,24 @@ app.get(['/diktsamling/*'], function (req, res)
 					if(args.length == 1)
 					{
 						// Henter alle dikt med informasjon om forfatter
-						db.all(`SELECT * FROM dikt, bruker WHERE `
+						db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
 							+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 						{
 
-							response += formater.dikt(rows)
+							response += JSON.stringify(rows,null,4)
+							res.setHeader("Content-Type", "application/json")
 							res.send(response)
 						})
 					}
 					else if(args.length == 2)
 					{
 						// Søker etter dikt og føyer til informasjon om forfatter
-						db.all(`SELECT * FROM dikt, bruker WHERE diktid='${args[1]}' AND `
+						db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${args[1]}' AND `
 							+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 						{
 
-							response += formater.dikt(rows)
+							response += JSON.stringify(rows,null,4)
+							res.setHeader("Content-Type", "application/json")
 							res.send(response)
 						})
 					}
@@ -94,9 +95,8 @@ app.get(['/diktsamling/*'], function (req, res)
 
 				default:
 					// Feilmelding dersom bruker forespør tabell som ikke støttes
-					res.send(`<div style="font-family: Helvetica"><h1>`
-						+ `Table "${args[0]}" either does not exist, `
-						+ `or does not provide access</h1></div>\n`)
+					res.status(404)
+					res.send("")
 					break
 			}
 		})
