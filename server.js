@@ -4,45 +4,7 @@ const sqlite3 = require('sqlite3').verbose()
 const app = express()
 const port = 3000
 
-var db = new sqlite3.Database('diktsamling.db')
 
-// Databaseopperasjoner i serie
-db.serialize(function () {
-
-	// Lager brukertabell
-	db.run('DROP TABLE IF EXISTS bruker')
-	db.run('CREATE TABLE bruker (epostadresse TEXT UNIQUE NOT NULL, '
-		+ 'passordhash TEXT NOT NULL, fornavn TEXT NOT NULL, etternavn TEXT, '
-		+ 'PRIMARY KEY(epostadresse))')
-
-	// Lager tabell over sesjoner
-	db.run('DROP TABLE IF EXISTS sesjon')
-	db.run('CREATE TABLE sesjon (sesjonsid INTEGER NOT NULL, epostadresse TEXT UNIQUE NOT NULL, '
-		+ 'PRIMARY KEY(sesjonsid), FOREIGN KEY(epostadresse) REFERENCES bruker(epostadresse))')
-
-	// Lager tabell over dikt
-	db.run('DROP TABLE IF EXISTS dikt')
-	db.run('CREATE TABLE dikt (diktid INTEGER NOT NULL, dikt TEXT, '
-		+ 'epostadresse TEXT UNIQUE NOT NULL, PRIMARY KEY(diktid),'
-		+ 'FOREIGN KEY(epostadresse) REFERENCES bruker(epostadresse))')
-
-	// Setter inn testbrukere i brukertabell
-	var stmt = db.prepare('INSERT INTO bruker VALUES ((?), (?), (?), (?))')
-
-	stmt.run("test@test.no", "sdfaseldjasdg", "test", "")
-	stmt.run("test2@test.no", "sdelkfjalkja", "test2", "")
-
-	stmt.finalize()
-
-	// Setter inn test dikt i dikttabell
-	var stmt = db.prepare('INSERT INTO dikt VALUES ((?), (?), (?))')
-
-	stmt.run("0", "Sample text\nsample text", "test@test.no")
-	stmt.run("1", "Sample text\nsample text2", "test2@test.no")
-
-	stmt.finalize()
-})
-db.close()
 
 // GET reqest til diktdatabase
 app.get(['/diktsamling/*'], function (req, res)
