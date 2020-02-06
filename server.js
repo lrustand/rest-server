@@ -17,9 +17,11 @@ app.get(['/diktsamling/*'], function (req, res)
 	{
 		console.log(req.connection.remoteAddress + " requests " + req.path)
 
-		//Deler opp * biten av urlen på /
+		// Deler opp * biten av urlen på /
 		var args = req.params[0].split("/")
-
+		
+		// Tar bort alle tomme elementer fra args
+		args = args.filter((element) => element.length > 0)
 
 		switch(args[0])
 		{
