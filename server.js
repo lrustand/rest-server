@@ -13,52 +13,51 @@ app.get(['/diktsamling/*'], function (req, res)
 	var response = ""
 
 	// Sjekker at request er alphanumerisk
-	if( req.params[0].search(/[^0-9a-z\/]/gi) == -1)
+	if( req.params[0].search(/[^0-9a-z\/]/gi) != -1) return;
+
+	console.log(req.connection.remoteAddress + " requests " + req.path)
+
+	// Deler opp * biten av urlen på /
+	var args = req.params[0].split("/")
+	
+	// Tar bort alle tomme elementer fra args
+	args = args.filter((element) => element.length > 0)
+
+	switch(args[0])
 	{
-		console.log(req.connection.remoteAddress + " requests " + req.path)
-
-		// Deler opp * biten av urlen på /
-		var args = req.params[0].split("/")
-		
-		// Tar bort alle tomme elementer fra args
-		args = args.filter((element) => element.length > 0)
-
-		switch(args[0])
-		{
-			case "dikt":
-				// Sjekker om det er 1 argument etter deling
-				if(args.length == 1)
+		case "dikt":
+			// Sjekker om det er 1 argument etter deling
+			if(args.length == 1)
+			{
+				// Henter alle dikt med informasjon om forfatter
+				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
+					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 				{
-					// Henter alle dikt med informasjon om forfatter
-					db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
-						+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
-					{
 
-						response += JSON.stringify(rows,null,4)
-						res.setHeader("Content-Type", "application/json")
-						res.send(response)
-					})
-				}
-				else if(args.length == 2)
+					response += JSON.stringify(rows,null,4)
+					res.setHeader("Content-Type", "application/json")
+					res.send(response)
+				})
+			}
+			else if(args.length == 2)
+			{
+				// Søker etter dikt og føyer til informasjon om forfatter
+				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${args[1]}' AND `
+					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 				{
-					// Søker etter dikt og føyer til informasjon om forfatter
-					db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${args[1]}' AND `
-						+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
-					{
 
-						response += JSON.stringify(rows,null,4)
-						res.setHeader("Content-Type", "application/json")
-						res.send(response)
-					})
-				}
-				break
+					response += JSON.stringify(rows,null,4)
+					res.setHeader("Content-Type", "application/json")
+					res.send(response)
+				})
+			}
+			break
 
-			default:
-				// Feilmelding dersom bruker forespør tabell som ikke støttes
-				res.status(404)
-				res.send("")
-				break
-		}
+		default:
+			// Feilmelding dersom bruker forespør tabell som ikke støttes
+			res.status(404)
+			res.send("")
+			break
 	}
 })
 
