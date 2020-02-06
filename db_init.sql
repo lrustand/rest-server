@@ -11,7 +11,7 @@ CREATE TABLE bruker
 DROP TABLE IF EXISTS sesjon;
 CREATE TABLE sesjon
 (
-	sesjonsid INTEGER UNIQUE NOT NULL,
+	sesjonsid TEXT UNIQUE NOT NULL,
 	epostadresse TEXT NOT NULL,
 	PRIMARY KEY(sesjonsid),
 	FOREIGN KEY(epostadresse) REFERENCES bruker(epostadresse)
