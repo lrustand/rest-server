@@ -36,7 +36,6 @@ app.get(['/diktsamling/*'], function (req, res)
 
 						response += JSON.stringify(rows,null,4)
 						res.setHeader("Content-Type", "application/json")
-						res.cookie("asd","12345")
 						res.send(response)
 					})
 				}
