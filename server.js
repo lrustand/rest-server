@@ -1,7 +1,9 @@
 const express = require('express')
 const sqlite3 = require('sqlite3').verbose()
+const SqlString = require('sqlstring')
 
 const app = express()
+app.use(express.json())
 const port = 3000
 
 
@@ -19,7 +21,7 @@ app.get(['/diktsamling/*'], function (req, res)
 
 	// Deler opp * biten av urlen på /
 	var args = req.params[0].split("/")
-	
+
 	// Tar bort alle tomme elementer fra args
 	args = args.filter((element) => element.length > 0)
 
@@ -63,7 +65,32 @@ app.get(['/diktsamling/*'], function (req, res)
 
 // TBA
 app.post('/', (req, res) => res.send('Hello World!'))
-app.put('/', (req, res) => res.send('Hello World!'))
+
+app.put('/diktsamling/dikt/*', (req, res) =>
+{
+	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
+
+	// Sjekker at request er alphanumerisk
+	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return;
+
+	db.run(`UPDATE dikt SET dikt="${SqlString.escape(req.body.dikt)}" `
+		+ `WHERE diktid=${req.params[0]}`, function(err)
+	{
+		if (err) return console.error(err.message)
+
+		if(this.changes > 0)
+		{
+			res.send()
+			console.log(`\t200 ${req.path} successfully updated`)
+		}
+		else
+		{
+			res.status(404)
+			console.log(`\t404 ${req.path} not found`)
+		}
+	})
+})
+
 app.delete('/', (req, res) => res.send('Hello World!'))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
