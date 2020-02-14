@@ -35,7 +35,6 @@ app.get(['/diktsamling/*'], function (req, res)
 				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
 					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 				{
-
 					response += JSON.stringify(rows,null,4)
 					res.setHeader("Content-Type", "application/json")
 					res.send(response)
@@ -47,7 +46,6 @@ app.get(['/diktsamling/*'], function (req, res)
 				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${args[1]}' AND `
 					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 				{
-
 					response += JSON.stringify(rows,null,4)
 					res.setHeader("Content-Type", "application/json")
 					res.send(response)
@@ -73,7 +71,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	// Sjekker at request er alphanumerisk
 	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return;
 
-	db.run(`UPDATE dikt SET dikt="${SqlString.escape(req.body.dikt)}" `
+	db.run(`UPDATE dikt SET dikt=${SqlString.escape(req.body.dikt)} `
 		+ `WHERE diktid=${req.params[0]}`, function(err)
 	{
 		if (err) return console.error(err.message)
