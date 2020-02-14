@@ -89,6 +89,49 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	})
 })
 
-app.delete('/', (req, res) => res.send('Hello World!'))
+app.delete('/diktsamling/dikt/*', (req, res) => 
+{
+	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
+
+	db.run(`DELETE dikt WHERE diktid=${SqlString.escape(req.params[0])}`, function(err)
+	{
+		if (err) return console.error(err.message)
+
+		if(this.changes > 0)
+		{
+			res.send()
+			console.log(`\t200 ${req.path} successfully deleted`)
+		}
+		else
+		{
+			res.status(404)
+			console.log(`\t404 ${req.patch} not found`)
+		}
+	}
+	)
+})
+
+app.delete('/diktsamling/dikt/', (req, res) => 
+{
+	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
+
+	db.run(`DELETE dikt WHERE epostadresse = ${SqlString.escape(req.body.epostadresse)}`, function(err)
+	{
+		if (err) return console.error(err.message)
+
+		if(this.changes > 0)
+		{
+			res.send()
+			console.log(`\t200 ${req.body.epostadresse} successfully deleted`)
+		}
+		else
+		{
+			res.status(404)
+			console.log(`\t404 ${req.body.epostadresse} bad actor`)
+		}
+	}
+	)
+})	
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
