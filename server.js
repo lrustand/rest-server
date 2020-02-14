@@ -15,7 +15,7 @@ app.get(['/diktsamling/*'], function (req, res)
 	var response = ""
 
 	// Sjekker at request er alphanumerisk
-	if( req.params[0].search(/[^0-9a-z\/]/gi) != -1) return;
+	if( req.params[0].search(/[^0-9a-z\/]/gi) != -1) return
 
 	console.log(req.connection.remoteAddress + " requests " + req.path)
 
@@ -62,14 +62,43 @@ app.get(['/diktsamling/*'], function (req, res)
 })
 
 // TBA
-app.post('/', (req, res) => res.send('Hello World!'))
+app.post('/diktsamling/dikt/', (req, res) =>
+{
+	console.log(`${req.connection.remoteAddress} `
+		+ `requests to insert at ${req.path} as ${req.body.epostadresse}`)
+
+	db.run(`INSERT INTO dikt `
+		+ `(`
+		+	`diktid, `
+		+	`dikt, `
+		+	`epostadresse`
+		+ `)`
+		+ ` VALUES `
+		+ `(`
+		+	`NULL, `
+		+	`${SqlString.escape(req.body.dikt)}, `
+		+	`${SqlString.escape(req.body.epostadresse)}`
+		+ `)`
+		, function(err)
+	{
+		if (err)
+		{
+			res.status(400)
+			return console.error(err.message)
+		}
+
+		res.send()
+		console.log(`\t200 ${req.path}${this.lastID} successfully created by `
+		+ `${req.connection.remoteAddress} as ${req.body.epostadresse}`)
+	})
+})
 
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
 
 	// Sjekker at request er alphanumerisk
-	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return;
+	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(req.body.dikt)} `
 		+ `WHERE diktid=${req.params[0]}`, function(err)
