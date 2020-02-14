@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS sesjon;
 CREATE TABLE sesjon
 (
 	sesjonsid INTEGER UNIQUE NOT NULL,
-	epostadresse TEXT UNIQUE NOT NULL,
+	epostadresse TEXT NOT NULL,
 	PRIMARY KEY(sesjonsid),
 	FOREIGN KEY(epostadresse) REFERENCES bruker(epostadresse)
 );
@@ -22,7 +22,7 @@ CREATE TABLE dikt
 (
 	diktid INTEGER UNIQUE NOT NULL,
 	dikt TEXT,
-	epostadresse TEXT UNIQUE NOT NULL,
+	epostadresse TEXT NOT NULL,
 	PRIMARY KEY(diktid),
 	FOREIGN KEY(epostadresse) REFERENCES bruker(epostadresse)
 );
