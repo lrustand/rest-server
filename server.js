@@ -64,8 +64,12 @@ app.get(['/diktsamling/*'], function (req, res)
 // TBA
 app.post('/diktsamling/dikt/', (req, res) =>
 {
+	// Dekoder dikt og epost for å tilate spesialtegn med %
+	var dikt = decodeURIComponent(req.body.dikt);
+	var epost = decodeURIComponent(req.body.epostadresse);
+
 	console.log(`${req.connection.remoteAddress} `
-		+ `requests to insert at ${req.path} as ${req.body.epostadresse}`)
+		+ `requests to insert at ${req.path} as ${epost}`)
 
 	db.run(`INSERT INTO dikt `
 		+ `(`
@@ -76,8 +80,8 @@ app.post('/diktsamling/dikt/', (req, res) =>
 		+ ` VALUES `
 		+ `(`
 		+	`NULL, `
-		+	`${SqlString.escape(req.body.dikt)}, `
-		+	`${SqlString.escape(req.body.epostadresse)}`
+		+	`${SqlString.escape(dikt)}, `
+		+	`${SqlString.escape(epost)}`
 		+ `)`
 		, function(err)
 	{
@@ -89,18 +93,22 @@ app.post('/diktsamling/dikt/', (req, res) =>
 
 		res.send()
 		console.log(`\t200 ${req.path}${this.lastID} successfully created by `
-		+ `${req.connection.remoteAddress} as ${req.body.epostadresse}`)
+		+ `${req.connection.remoteAddress} as ${epost}`)
 	})
 })
 
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
+	// Dekoder dikt og epost for å tilate spesialtegn med %
+	var dikt = decodeURIComponent(req.body.dikt);
+	var epost = decodeURIComponent(req.body.epostadresse);
+	
 	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
 
 	// Sjekker at request er alphanumerisk
 	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return
 
-	db.run(`UPDATE dikt SET dikt=${SqlString.escape(req.body.dikt)} `
+	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
 		+ `WHERE diktid=${req.params[0]}`, function(err)
 	{
 		if (err) return console.error(err.message)
@@ -120,21 +128,25 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 
 app.delete('/diktsamling/dikt/', (req, res) => 
 {
+	// Dekoder dikt og epost for å tilate spesialtegn med %
+	var dikt = decodeURIComponent(req.body.dikt);
+	var epost = decodeURIComponent(req.body.epostadresse);
+
 	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(req.body.epostadresse)}`, function(err)
+	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epostadresse)}`, function(err)
 	{
 		if (err) return console.error(err.message)
 
 		if(this.changes > 0)
 		{
 			res.send()
-			console.log(`\t200 ${req.body.epostadresse} successfully deleted`)
+			console.log(`\t200 ${epostadresse} successfully deleted`)
 		}
 		else
 		{
 			res.status(404)
-			console.log(`\t404 ${req.body.epostadresse} bad actor`)
+			console.log(`\t404 ${epostadresse} bad actor`)
 		}
 	}
 	)
