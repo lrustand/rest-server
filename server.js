@@ -134,19 +134,19 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 
 	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epostadresse)}`, function(err)
+	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epost)}`, function(err)
 	{
 		if (err) return console.error(err.message)
 
 		if(this.changes > 0)
 		{
 			res.send()
-			console.log(`\t200 ${epostadresse} successfully deleted`)
+			console.log(`\t200 ${epost} successfully deleted`)
 		}
 		else
 		{
 			res.status(404)
-			console.log(`\t404 ${epostadresse} bad actor`)
+			console.log(`\t404 ${epost} bad actor`)
 		}
 	}
 	)
