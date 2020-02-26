@@ -44,6 +44,22 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 	})
 })
 
+// GET request for alle dikt til bruker
+app.get(['/diktsamling/bruker/'], (req, res) =>
+{
+	console.log(`${req.connection.remoteAddress} `
+		+ `requests ${req.path}`)
+
+	// Søker etter dikt og føyer til informasjon om forfatter
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE dikt.epostadresse='test@test.no' AND `
+		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
+	{
+		var response = JSON.stringify(rows,null,4)
+		res.setHeader("Content-Type", "application/json")
+		res.send(response)
+	})
+})
+
 app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
