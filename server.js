@@ -9,59 +9,41 @@ const port = 3000
 
 var db = new sqlite3.Database('diktsamling.db')
 
-// GET reqest til diktdatabase
-app.get(['/diktsamling/*'], function (req, res)
+// GET request til diktdatabase
+app.get(['/diktsamling/dikt/'], (req, res) =>
 {
-	var response = ""
+	console.log(`${req.connection.remoteAddress} `
+		+ `requests ${req.path}`)
 
-	// Sjekker at request er alphanumerisk
-	if( req.params[0].search(/[^0-9a-z\/]/gi) != -1) return
-
-	console.log(req.connection.remoteAddress + " requests " + req.path)
-
-	// Deler opp * biten av urlen på /
-	var args = req.params[0].split("/")
-
-	// Tar bort alle tomme elementer fra args
-	args = args.filter((element) => element.length > 0)
-
-	switch(args[0])
+	// Henter alle dikt med informasjon om forfatter
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
+		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
 	{
-		case "dikt":
-			// Sjekker om det er 1 argument etter deling
-			if(args.length == 1)
-			{
-				// Henter alle dikt med informasjon om forfatter
-				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
-					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
-				{
-					response += JSON.stringify(rows,null,4)
-					res.setHeader("Content-Type", "application/json")
-					res.send(response)
-				})
-			}
-			else if(args.length == 2)
-			{
-				// Søker etter dikt og føyer til informasjon om forfatter
-				db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${args[1]}' AND `
-					+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
-				{
-					response += JSON.stringify(rows,null,4)
-					res.setHeader("Content-Type", "application/json")
-					res.send(response)
-				})
-			}
-			break
-
-		default:
-			// Feilmelding dersom bruker forespør tabell som ikke støttes
-			res.status(404)
-			res.send("")
-			break
-	}
+		var response = JSON.stringify(rows,null,4)
+		res.setHeader("Content-Type", "application/json")
+		res.send(response)
+	})
 })
 
-// TBA
+// GET request med diktid
+app.get(['/diktsamling/dikt/*'], (req, res) =>
+{
+	console.log(`${req.connection.remoteAddress} `
+		+ `requests ${req.path}`)
+
+	// Sjekker at request er numerisk
+	if( req.params[0].search(/[^0-9]/g) != -1) return
+	
+	// Søker etter dikt og føyer til informasjon om forfatter
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
+		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
+	{
+		var response = JSON.stringify(rows,null,4)
+		res.setHeader("Content-Type", "application/json")
+		res.send(response)
+	})
+})
+
 app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
