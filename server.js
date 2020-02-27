@@ -175,6 +175,36 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 	)
 })
 
+// Kjører priviligerte funksjoner
+function sudo(session, res, func, args)
+{
+	if (session == null)
+	{
+		res.status(403)
+		res.send("FORBIDDEN")
+		return
+	}
+
+	db.get(`SELECT epostadresse FROM sesjon WHERE sesjonsid="${session}"`,
+		{}, (err, result) =>
+	{
+		if (err) throw err
+		if (result == null)
+		{
+			console.log(`Session:${session} not found`)
+			res.status(403)
+			res.send("FORBIDDEN")
+			return
+		}
+		else
+		{
+			user = result.epostadresse
+		}
+		func(user, res, ...args);
+	})
+}
+
+
 // Innlogging
 app.post('/diktsamling/bruker/', (req, res) =>
 {
