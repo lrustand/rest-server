@@ -1,11 +1,14 @@
 const express = require('express')
 const sqlite3 = require('sqlite3').verbose()
 const SqlString = require('sqlstring')
+const cookieParser = require('cookie-parser')
+const crypto = require('crypto');
 
 const app = express()
 app.use(express.json())
 const port = 3000
 
+app.use(cookieParser())
 
 var db = new sqlite3.Database('diktsamling.db')
 
@@ -171,5 +174,34 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 	}
 	)
 })
+
+// Innlogging
+app.post('/diktsamling/bruker/', (req, res) =>
+{
+	var username = req.body.username
+	var password = req.body.password
+	db.get(`SELECT passordhash FROM bruker WHERE epostadresse="${username}"`,
+		{}, (err, result) =>
+	{
+		if (err) throw err
+		if (password == result.passordhash)
+		{
+			var session = crypto.randomBytes(16).toString('base64')
+			res.cookie("Session", session)
+			db.run(`INSERT INTO sesjon VALUES ("${session}","${username}")`)
+			res.send("")
+		}
+		else
+		{
+			res.status(403)
+			res.send("")
+		}
+	})
+})
+
+
+// TBA
+app.put('/', (req, res) => res.send('Hello World!'))
+app.delete('/', (req, res) => res.send('Hello World!'))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
