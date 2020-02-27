@@ -20,7 +20,7 @@ CREATE TABLE sesjon
 DROP TABLE IF EXISTS dikt;
 CREATE TABLE dikt
 (
-	diktid INTEGER AUTOINCREMENT,
+	diktid INTEGER UNIQUE NOT NULL,
 	dikt TEXT,
 	epostadresse TEXT NOT NULL,
 	PRIMARY KEY(diktid),
