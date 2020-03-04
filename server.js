@@ -137,7 +137,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
 		+ `WHERE diktid=${diktid} `
 		+ `AND epostadresse=${req.email}`,
-		(err) =>
+		function (err)
 	{
 		if (err) return console.error(err.message)
 
@@ -162,7 +162,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	var dikt = decodeURIComponent(req.body.dikt);
 
 	db.run(`DELETE FROM dikt WHERE epostadresse = ${req.email}`,
-		(err) =>
+		function (err)
 	{
 		if (err) return console.error(err.message)
 
@@ -191,7 +191,7 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 	db.run(`DELETE FROM dikt `
 		+ `WHERE diktid=${SqlString.escape(diktid)} `
 		+ `AND epostadresse="${req.email}"`,
-		(err) =>
+		function (err)
 	{
 		if (err) return console.error(err.message)
 
