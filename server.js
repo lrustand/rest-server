@@ -43,7 +43,8 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 
 	// Søker etter dikt og føyer til informasjon om forfatter
 	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
-		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
+		+ `dikt.epostadresse=bruker.epostadresse`,
+		(err, rows) =>
 	{
 		var response = JSON.stringify(rows,null,4)
 		res.setHeader("Content-Type", "application/json")
@@ -92,8 +93,8 @@ function lagDikt(epost, res, dikt)
 		+ `(`
 		+	`${SqlString.escape(dikt)}, `
 		+	`${SqlString.escape(epost)}`
-		+ `)`
-		, function(err)
+		+ `)`,
+		(err) =>
 	{
 		if (err)
 		{
@@ -118,7 +119,8 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	if( req.params[0].search(/[^0-9]/g) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
-		+ `WHERE diktid=${req.params[0]}`, function(err)
+		+ `WHERE diktid=${req.params[0]}`,
+		(err) =>
 	{
 		if (err) return console.error(err.message)
 
@@ -145,7 +147,8 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 
 	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epost)}`, function(err)
+	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epost)}`,
+		(err) =>
 	{
 		if (err) return console.error(err.message)
 
@@ -168,7 +171,8 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE diktid=${SqlString.escape(req.params[0])}`, function(err)
+	db.run(`DELETE FROM dikt WHERE diktid=${SqlString.escape(req.params[0])}`,
+		(err) =>
 	{
 		if (err) return console.error(err.message)
 
