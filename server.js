@@ -23,6 +23,25 @@ app.use( (req, res, next) =>
 })
 
 
+// Middleware for å hente epostadressen til innlogget bruker
+app.use( (req, res, next) =>
+{
+	session = req.cookies.Session
+
+	db.get(`SELECT epostadresse FROM sesjon WHERE sesjonsid="${session}"`,
+		{}, (err, result) =>
+	{
+		if (err) throw err
+		req.email = null
+		if (result != null)
+		{
+			req.email = result.epostadresse
+		}
+		next()
+	})
+})
+
+
 // GET request til diktdatabase
 // Henter alle dikt
 app.get(['/diktsamling/dikt/'], (req, res) =>
@@ -60,11 +79,11 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 
 // GET request for alle dikt til bruker
 // Henter alle dikt til innlogget bruker
-function listEgneDikt(epost, res)
+app.get(['/diktsamling/bruker/'], (req, res) =>
 {
 	// Søker etter dikt og føyer til informasjon om forfatter
 	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker `
-		+ `WHERE dikt.epostadresse='${epost}' AND `
+		+ `WHERE dikt.epostadresse='${req.email}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
@@ -72,10 +91,6 @@ function listEgneDikt(epost, res)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
 	})
-}
-app.get(['/diktsamling/bruker/'], (req, res) =>
-{
-	sudo(req.cookies.Session, res, listEgneDikt, [])
 })
 
 // Opprett nytt dikt
@@ -83,12 +98,6 @@ app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
-
-	sudo(req.cookies.Session, res, lagDikt, [dikt])
-})
-
-function lagDikt(epost, res, dikt)
-{
 	db.run(`INSERT INTO dikt `
 		+ `(`
 		+	`dikt, `
@@ -97,7 +106,7 @@ function lagDikt(epost, res, dikt)
 		+ ` VALUES `
 		+ `(`
 		+	`${SqlString.escape(dikt)}, `
-		+	`${SqlString.escape(epost)}`
+		+	`${SqlString.escape(req.email)}`
 		+ `)`,
 		(err) =>
 	{
@@ -109,7 +118,7 @@ function lagDikt(epost, res, dikt)
 
 		res.send()
 	})
-}
+})
 
 // Endre et allerede eksisterende dikt
 app.put('/diktsamling/dikt/*', (req, res) =>
@@ -190,36 +199,6 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 	}
 	)
 })
-
-// Kjører priviligerte funksjoner
-function sudo(session, res, func, args)
-{
-	if (session == null)
-	{
-		res.status(403)
-		res.send("FORBIDDEN")
-		return
-	}
-
-	db.get(`SELECT epostadresse FROM sesjon WHERE sesjonsid="${session}"`,
-		{}, (err, result) =>
-	{
-		if (err) throw err
-		if (result == null)
-		{
-			console.log(`Session:${session} not found`)
-			res.status(403)
-			res.send("FORBIDDEN")
-			return
-		}
-		else
-		{
-			user = result.epostadresse
-		}
-		func(user, res, ...args);
-	})
-}
-
 
 // Innlogging
 app.post('/diktsamling/bruker/', (req, res) =>
