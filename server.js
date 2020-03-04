@@ -190,7 +190,7 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 
 	db.run(`DELETE FROM dikt `
 		+ `WHERE diktid=${SqlString.escape(diktid)} `
-		+ `AND epostadresse=${req.email}`,
+		+ `AND epostadresse="${req.email}"`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
