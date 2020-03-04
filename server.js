@@ -36,7 +36,7 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 
 	// Sjekker at request er numerisk
 	if( req.params[0].search(/[^0-9]/g) != -1) return
-	
+
 	// Søker etter dikt og føyer til informasjon om forfatter
 	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
@@ -100,7 +100,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
 	var epost = decodeURIComponent(req.body.epostadresse);
-	
+
 	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
 
 	// Sjekker at request er alphanumerisk
@@ -124,7 +124,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	})
 })
 
-app.delete('/diktsamling/dikt/', (req, res) => 
+app.delete('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
@@ -150,7 +150,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	)
 })
 
-app.delete('/diktsamling/dikt/*', (req, res) => 
+app.delete('/diktsamling/dikt/*', (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} requests to delete ${req.path}`)
 
