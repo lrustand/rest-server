@@ -20,8 +20,10 @@ app.get(['/diktsamling/dikt/'], (req, res) =>
 		+ `requests ${req.path}`)
 
 	// Henter alle dikt med informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE `
-		+ `dikt.epostadresse=bruker.epostadresse`, function (err, rows)
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt `
+		+ `LEFT JOIN bruker `
+		+ `ON dikt.epostadresse=bruker.epostadresse`,
+		(err, rows) =>
 	{
 		var response = JSON.stringify(rows,null,4)
 		res.setHeader("Content-Type", "application/json")
