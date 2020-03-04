@@ -108,8 +108,8 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 
 	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
 
-	// Sjekker at request er alphanumerisk
-	if( req.params[0].search(/[^0-9a-z]/gi) != -1) return
+	// Sjekker at request er numerisk
+	if( req.params[0].search(/[^0-9]/g) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
 		+ `WHERE diktid=${req.params[0]}`, function(err)
