@@ -42,7 +42,8 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 	if( req.params[0].search(/[^0-9]/g) != -1) return
 
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
+	db.all(`SELECT diktid,dikt,fornavn,etternavn `
+		+ `FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
@@ -57,7 +58,8 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 function listEgneDikt(epost, res)
 {
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker WHERE dikt.epostadresse='${epost}' AND `
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker`
+		+ `WHERE dikt.epostadresse='${epost}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
@@ -147,7 +149,8 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 
 	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE epostadresse = ${SqlString.escape(epost)}`,
+	db.run(`DELETE FROM dikt `
+		+ `WHERE epostadresse = ${SqlString.escape(epost)}`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
@@ -171,7 +174,8 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} requests to delete ${req.path}`)
 
-	db.run(`DELETE FROM dikt WHERE diktid=${SqlString.escape(req.params[0])}`,
+	db.run(`DELETE FROM dikt `
+		+ `WHERE diktid=${SqlString.escape(req.params[0])}`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
@@ -225,7 +229,8 @@ app.post('/diktsamling/bruker/', (req, res) =>
 {
 	var username = req.body.username
 	var password = req.body.password
-	db.get(`SELECT passordhash FROM bruker WHERE epostadresse="${username}"`,
+	db.get(`SELECT passordhash FROM bruker `
+		+ `WHERE epostadresse="${username}"`,
 		{}, (err, result) =>
 	{
 		if (err) throw err
