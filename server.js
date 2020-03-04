@@ -5,10 +5,10 @@ const cookieParser = require('cookie-parser')
 const crypto = require('crypto');
 
 const app = express()
+app.use(cookieParser())
 app.use(express.json())
 const port = 3000
 
-app.use(cookieParser())
 
 var db = new sqlite3.Database('diktsamling.db')
 
@@ -67,20 +67,19 @@ app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
-	var epost = decodeURIComponent(req.body.epostadresse);
 
-	console.log(`${req.connection.remoteAddress} `
-		+ `requests to insert at ${req.path} as ${epost}`)
+	sudo(req.cookies.Session, res, lagDikt, [dikt])
+})
 
+function lagDikt(epost, res, dikt)
+{
 	db.run(`INSERT INTO dikt `
 		+ `(`
-		+	`diktid, `
 		+	`dikt, `
 		+	`epostadresse`
 		+ `)`
 		+ ` VALUES `
 		+ `(`
-		+	`NULL, `
 		+	`${SqlString.escape(dikt)}, `
 		+	`${SqlString.escape(epost)}`
 		+ `)`
@@ -93,10 +92,8 @@ app.post('/diktsamling/dikt/', (req, res) =>
 		}
 
 		res.send()
-		console.log(`\t200 ${req.path}${this.lastID} successfully created by `
-		+ `${req.connection.remoteAddress} as ${epost}`)
 	})
-})
+}
 
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
@@ -219,7 +216,7 @@ app.post('/diktsamling/bruker/', (req, res) =>
 			var session = crypto.randomBytes(16).toString('base64')
 			res.cookie("Session", session)
 			db.run(`INSERT INTO sesjon VALUES ("${session}","${username}")`)
-			res.send("")
+			res.send("Successfully logged in")
 		}
 		else
 		{
