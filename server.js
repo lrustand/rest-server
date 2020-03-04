@@ -12,13 +12,21 @@ const port = 3000
 
 var db = new sqlite3.Database('diktsamling.db')
 
+// Middleware for å logge alle requests
+app.use( (req, res, next) =>
+{
+	client = req.connection.remoteAddress
+	path = req.path
+	method = req.method
+	console.log(`${client} ${method} ${path}`)
+	next()
+})
+
+
 // GET request til diktdatabase
 // Henter alle dikt
 app.get(['/diktsamling/dikt/'], (req, res) =>
 {
-	console.log(`${req.connection.remoteAddress} `
-		+ `requests ${req.path}`)
-
 	// Henter alle dikt med informasjon om forfatter
 	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt `
 		+ `LEFT JOIN bruker `
@@ -35,9 +43,6 @@ app.get(['/diktsamling/dikt/'], (req, res) =>
 // Henter et spesifikt dikt
 app.get(['/diktsamling/dikt/*'], (req, res) =>
 {
-	console.log(`${req.connection.remoteAddress} `
-		+ `requests ${req.path}`)
-
 	// Sjekker at request er numerisk
 	if( req.params[0].search(/[^0-9]/g) != -1) return
 
@@ -70,8 +75,6 @@ function listEgneDikt(epost, res)
 }
 app.get(['/diktsamling/bruker/'], (req, res) =>
 {
-	console.log(`${req.connection.remoteAddress} `
-		+ `requests ${req.path}`)
 	sudo(req.cookies.Session, res, listEgneDikt, [])
 })
 
@@ -115,8 +118,6 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	var dikt = decodeURIComponent(req.body.dikt);
 	var epost = decodeURIComponent(req.body.epostadresse);
 
-	console.log(`${req.connection.remoteAddress} requests to update ${req.path}`)
-
 	// Sjekker at request er numerisk
 	if( req.params[0].search(/[^0-9]/g) != -1) return
 
@@ -147,8 +148,6 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	var dikt = decodeURIComponent(req.body.dikt);
 	var epost = decodeURIComponent(req.body.epostadresse);
 
-	console.log(`${req.connection.remoteAdress} requests to delete ${req.path}`)
-
 	db.run(`DELETE FROM dikt `
 		+ `WHERE epostadresse = ${SqlString.escape(epost)}`,
 		(err) =>
@@ -172,8 +171,6 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 // Sletter spesifisert dik
 app.delete('/diktsamling/dikt/*', (req, res) =>
 {
-	console.log(`${req.connection.remoteAddress} requests to delete ${req.path}`)
-
 	db.run(`DELETE FROM dikt `
 		+ `WHERE diktid=${SqlString.escape(req.params[0])}`,
 		(err) =>
