@@ -123,15 +123,15 @@ app.post('/diktsamling/dikt/', (req, res) =>
 // Endre et allerede eksisterende dikt
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
-	// Dekoder dikt og epost for å tilate spesialtegn med %
+	// Dekoder dikt for å tillate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
-	var epost = decodeURIComponent(req.body.epostadresse);
 
 	// Sjekker at request er numerisk
 	if( req.params[0].search(/[^0-9]/g) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
-		+ `WHERE diktid=${req.params[0]}`,
+		+ `WHERE diktid=${req.params[0]} `
+		+ `AND epostadresse=${req.email}`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
@@ -155,10 +155,8 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
-	var epost = decodeURIComponent(req.body.epostadresse);
 
-	db.run(`DELETE FROM dikt `
-		+ `WHERE epostadresse = ${SqlString.escape(epost)}`,
+	db.run(`DELETE FROM dikt WHERE epostadresse = ${req.email}`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
@@ -166,12 +164,12 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 		if(this.changes > 0)
 		{
 			res.send()
-			console.log(`\t200 ${epost} successfully deleted`)
+			console.log(`\t200 ${req.email} successfully deleted`)
 		}
 		else
 		{
 			res.status(404)
-			console.log(`\t404 ${epost} bad actor`)
+			console.log(`\t404 ${req.email} bad actor`)
 		}
 	}
 	)
@@ -181,7 +179,8 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 app.delete('/diktsamling/dikt/*', (req, res) =>
 {
 	db.run(`DELETE FROM dikt `
-		+ `WHERE diktid=${SqlString.escape(req.params[0])}`,
+		+ `WHERE diktid=${SqlString.escape(req.params[0])} `
+		+ `AND epostadresse=${req.email}`,
 		(err) =>
 	{
 		if (err) return console.error(err.message)
