@@ -13,20 +13,20 @@ const port = 3000
 var db = new sqlite3.Database('diktsamling.db')
 
 // Middleware for å logge alle requests
-app.use( (req, res, next) =>
+app.use((req, res, next) =>
 {
-	client = req.connection.remoteAddress
-	path = req.path
-	method = req.method
+	var client = req.connection.remoteAddress
+	var path = req.path
+	var method = req.method
 	console.log(`${client} ${method} ${path}`)
 	next()
 })
 
 
 // Middleware for å hente epostadressen til innlogget bruker
-app.use( (req, res, next) =>
+app.use((req, res, next) =>
 {
-	session = req.cookies.Session
+	var session = req.cookies.Session
 
 	db.get(`SELECT epostadresse FROM sesjon WHERE sesjonsid="${session}"`,
 		{}, (err, result) =>
@@ -44,15 +44,15 @@ app.use( (req, res, next) =>
 
 // GET request til diktdatabase
 // Henter alle dikt
-app.get(['/diktsamling/dikt/'], (req, res) =>
+app.get('/diktsamling/dikt/', (req, res) =>
 {
 	// Henter alle dikt med informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt `
+	db.all(`SELECT diktid, dikt, fornavn, etternavn FROM dikt `
 		+ `LEFT JOIN bruker `
 		+ `ON dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
-		var response = JSON.stringify(rows,null,4)
+		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
 	})
@@ -60,18 +60,20 @@ app.get(['/diktsamling/dikt/'], (req, res) =>
 
 // GET request med diktid
 // Henter et spesifikt dikt
-app.get(['/diktsamling/dikt/*'], (req, res) =>
+app.get('/diktsamling/dikt/*', (req, res) =>
 {
-	// Sjekker at request er numerisk
-	if( req.params[0].search(/[^0-9]/g) != -1) return
+	var diktid = req.params[0]
+
+	// Sjekker at diktid er numerisk
+	if (diktid.search(/[^0-9]/g) != -1) return
 
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn `
-		+ `FROM dikt, bruker WHERE diktid='${req.params[0]}' AND `
+	db.all(`SELECT diktid, dikt, fornavn, etternavn `
+		+ `FROM dikt, bruker WHERE diktid='${diktid}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
-		var response = JSON.stringify(rows,null,4)
+		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
 	})
@@ -79,15 +81,16 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 
 // GET request for alle dikt til bruker
 // Henter alle dikt til innlogget bruker
-app.get(['/diktsamling/bruker/'], (req, res) =>
+app.get('/diktsamling/bruker/', (req, res) =>
 {
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker `
+	db.all(`SELECT diktid, dikt, fornavn, etternavn `
+		+ `FROM dikt, bruker `
 		+ `WHERE dikt.epostadresse='${req.email}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
-		var response = JSON.stringify(rows,null,4)
+		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
 	})
@@ -98,6 +101,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
+
 	db.run(`INSERT INTO dikt `
 		+ `(`
 		+	`dikt, `
@@ -106,7 +110,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 		+ ` VALUES `
 		+ `(`
 		+	`${SqlString.escape(dikt)}, `
-		+	`${SqlString.escape(req.email)}`
+		+	`${req.email}`
 		+ `)`,
 		(err) =>
 	{
@@ -125,12 +129,13 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 {
 	// Dekoder dikt for å tillate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
+	var diktid = req.params[0]
 
-	// Sjekker at request er numerisk
-	if( req.params[0].search(/[^0-9]/g) != -1) return
+	// Sjekker at diktid er numerisk
+	if (diktid.search(/[^0-9]/g) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
-		+ `WHERE diktid=${req.params[0]} `
+		+ `WHERE diktid=${diktid} `
 		+ `AND epostadresse=${req.email}`,
 		(err) =>
 	{
@@ -177,9 +182,14 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 
 // Sletter spesifisert dik
 app.delete('/diktsamling/dikt/*', (req, res) =>
-{
+	{
+	var diktid = req.params[0]
+
+	// Sjekker at diktid er numerisk
+	if (diktid.search(/[^0-9]/g) != -1) return
+
 	db.run(`DELETE FROM dikt `
-		+ `WHERE diktid=${SqlString.escape(req.params[0])} `
+		+ `WHERE diktid=${SqlString.escape(diktid)} `
 		+ `AND epostadresse=${req.email}`,
 		(err) =>
 	{
