@@ -13,6 +13,7 @@ const port = 3000
 var db = new sqlite3.Database('diktsamling.db')
 
 // GET request til diktdatabase
+// Henter alle dikt
 app.get(['/diktsamling/dikt/'], (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} `
@@ -29,6 +30,7 @@ app.get(['/diktsamling/dikt/'], (req, res) =>
 })
 
 // GET request med diktid
+// Henter et spesifikt dikt
 app.get(['/diktsamling/dikt/*'], (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} `
@@ -48,6 +50,7 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 })
 
 // GET request for alle dikt til bruker
+// Henter alle dikt til innlogget bruker
 app.get(['/diktsamling/bruker/'], (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} `
@@ -63,6 +66,7 @@ app.get(['/diktsamling/bruker/'], (req, res) =>
 	})
 })
 
+// Opprett nytt dikt
 app.post('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
@@ -95,6 +99,7 @@ function lagDikt(epost, res, dikt)
 	})
 }
 
+// Endre et allerede eksisterende dikt
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
@@ -124,6 +129,8 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	})
 })
 
+// TODO
+// Denne må fikses
 app.delete('/diktsamling/dikt/', (req, res) =>
 {
 	// Dekoder dikt og epost for å tilate spesialtegn med %
@@ -150,6 +157,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	)
 })
 
+// Sletter spesifisert dik
 app.delete('/diktsamling/dikt/*', (req, res) =>
 {
 	console.log(`${req.connection.remoteAddress} requests to delete ${req.path}`)
