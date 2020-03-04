@@ -58,7 +58,7 @@ app.get(['/diktsamling/dikt/*'], (req, res) =>
 function listEgneDikt(epost, res)
 {
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker`
+	db.all(`SELECT diktid,dikt,fornavn,etternavn FROM dikt, bruker `
 		+ `WHERE dikt.epostadresse='${epost}' AND `
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
