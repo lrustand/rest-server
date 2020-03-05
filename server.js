@@ -110,7 +110,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 		+ ` VALUES `
 		+ `(`
 		+	`${SqlString.escape(dikt)}, `
-		+	`${req.email}`
+		+	`"${req.email}"`
 		+ `)`,
 		(err) =>
 	{
@@ -135,8 +135,8 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	if (diktid.search(/[^0-9]/g) != -1) return
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
-		+ `WHERE diktid=${diktid} `
-		+ `AND epostadresse=${req.email}`,
+		+ `WHERE diktid="${diktid}" `
+		+ `AND epostadresse="${req.email}"`,
 		function (err)
 	{
 		if (err) return console.error(err.message)
@@ -161,7 +161,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
 
-	db.run(`DELETE FROM dikt WHERE epostadresse = ${req.email}`,
+	db.run(`DELETE FROM dikt WHERE epostadresse = "${req.email}"`,
 		function (err)
 	{
 		if (err) return console.error(err.message)
