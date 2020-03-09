@@ -210,7 +210,7 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 })
 
 // Innlogging
-app.post('/diktsamling/bruker/', (req, res) =>
+app.post('/diktsamling/sesjon/', (req, res) =>
 {
 	var username = req.body.username
 	var password = req.body.password
