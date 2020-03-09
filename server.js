@@ -234,5 +234,21 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 	})
 })
 
+// Utlogging
+// Logger ut kun denne sesjonen
+app.delete('/diktsamling/sesjon/', (req, res) =>
+{
+	if (req.email != null)
+	{
+		db.get(`DELETE FROM sesjon `
+			+ `WHERE sesjonsid='${req.cookies.Session}'`,
+			{}, (err, result) =>
+		{
+			if (err) throw err
+			res.send("Successfully logged out")
+		})
+	}
+})
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
