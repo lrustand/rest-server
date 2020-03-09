@@ -68,9 +68,10 @@ app.get('/diktsamling/dikt/*', (req, res) =>
 	if (diktid.search(/[^0-9]/g) != -1) return
 
 	// Søker etter dikt og føyer til informasjon om forfatter
-	db.all(`SELECT diktid, dikt, fornavn, etternavn `
-		+ `FROM dikt, bruker WHERE diktid='${diktid}' AND `
-		+ `dikt.epostadresse=bruker.epostadresse`,
+	db.all(`SELECT diktid, dikt, fornavn, etternavn FROM dikt `
+		+ `LEFT JOIN bruker `
+		+ `ON dikt.epostadresse=bruker.epostadresse `
+		+ `WHERE diktid='${diktid}'`,
 		(err, rows) =>
 	{
 		var response = JSON.stringify(rows, null, 4)
