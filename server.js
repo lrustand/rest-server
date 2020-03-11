@@ -155,13 +155,9 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	})
 })
 
-// TODO
-// Denne må fikses
+// Sletter alle diktene til innlogget bruker
 app.delete('/diktsamling/dikt/', (req, res) =>
 {
-	// Dekoder dikt og epost for å tilate spesialtegn med %
-	var dikt = decodeURIComponent(req.body.dikt);
-
 	db.run(`DELETE FROM dikt WHERE epostadresse = "${req.email}"`,
 		function (err)
 	{
@@ -177,8 +173,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 			res.status(404)
 			console.log(`\t404 ${req.email} bad actor`)
 		}
-	}
-	)
+	})
 })
 
 // Sletter spesifisert dik
@@ -206,8 +201,7 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 			res.status(404)
 			console.log(`\t404 ${req.path} not found`)
 		}
-	}
-	)
+	})
 })
 
 // Innlogging
