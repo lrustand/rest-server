@@ -84,6 +84,12 @@ app.get('/diktsamling/dikt/*', (req, res) =>
 // Henter alle dikt til innlogget bruker
 app.get('/diktsamling/bruker/', (req, res) =>
 {
+	if (req.email == null)
+	{
+		res.send("[]")
+		return
+	}
+
 	// Søker etter dikt og føyer til informasjon om forfatter
 	db.all(`SELECT diktid, dikt, fornavn, etternavn `
 		+ `FROM dikt, bruker `
@@ -100,6 +106,13 @@ app.get('/diktsamling/bruker/', (req, res) =>
 // Opprett nytt dikt
 app.post('/diktsamling/dikt/', (req, res) =>
 {
+	// Bare la innloggede brukere laste opp dikt
+	if (req.email == null)
+	{
+		res.status(400)
+		return
+	}
+
 	// Dekoder dikt og epost for å tilate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
 
@@ -158,6 +171,11 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 // Sletter alle diktene til innlogget bruker
 app.delete('/diktsamling/dikt/', (req, res) =>
 {
+	if (req.email == null)
+	{
+		res.status(400)
+		return
+	}
 	db.run(`DELETE FROM dikt WHERE epostadresse = "${req.email}"`,
 		function (err)
 	{
