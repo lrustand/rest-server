@@ -271,4 +271,7 @@ app.delete('/diktsamling/sesjon/', (req, res) =>
 })
 
 
+// Serve statiske filer fra ajax-mappen
+app.use('/ajax/',express.static('ajax'))
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
