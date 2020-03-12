@@ -24,12 +24,14 @@ getUrl("/diktsamling/sesjon", function(xhttp) {
 
 	// Ikke logget inn
 	if (email == "null" || email == null) {
-		header.innerHTML += "<li class='white'>Ikke innlogget</li>"
+		header.innerHTML += "<li style='float:right'><a href='login.html'>Logg inn</a></li>"
+		header.innerHTML += "<li style='float:right' class='white'>Ikke innlogget</li>"
 	}
 
 	// Logget inn
 	else {
-		header.innerHTML += "<li class='white'>Logget inn som " + email + "</li>"
+		header.innerHTML += "<li style='float:right'><a href='logout.html'>Logg ut</a></li>"
+		header.innerHTML += "<li style='float:right' class='white'>Logget inn som " + email + "</li>"
 	}
 })
 
