@@ -47,8 +47,8 @@ app.use((req, res, next) =>
 app.get('/diktsamling/dikt/', (req, res) =>
 {
 	// Henter alle dikt med informasjon om forfatter
-	db.all(`SELECT diktid, dikt, fornavn, etternavn FROM dikt `
-		+ `LEFT JOIN bruker `
+	db.all(`SELECT diktid, dikt, fornavn, etternavn, dikt.epostadresse `
+		+ `FROM dikt LEFT JOIN bruker `
 		+ `ON dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
