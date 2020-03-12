@@ -11,3 +11,20 @@ function getUrl(url, func) {
 	xhttp.send()
 }
 
+// Fyller header med inn/utloggingsdetaljer osv
+getUrl("/diktsamling/sesjon", function(xhttp) {
+	var email = JSON.parse(xhttp.responseText).epostadresse
+	var header = document.getElementById("header")
+
+	// Ikke logget inn
+	if (email == "null" || email == null) {
+		header.innerHTML += "<li class='white'>Ikke innlogget</li>"
+	}
+
+	// Logget inn
+	else {
+		header.innerHTML += "<li class='white'>Logget inn som " + email + "</li>"
+	}
+})
+
+
