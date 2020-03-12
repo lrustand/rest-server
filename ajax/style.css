@@ -1,0 +1,66 @@
+body, html{
+	height: 100%;
+	width: 100%;
+	background-color: #1a1a1a;
+	color: lightgray;
+	margin: 0;
+	padding: 0;
+}
+
+.main {
+	margin: 20px;
+}
+
+.header {
+	position: sticky;
+	top: 0;
+	left: 0;
+	width: 100%;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #333;
+	text-align: center;
+}
+
+.header li {
+	float: left;
+}
+
+.header a {
+	display: block;
+	color: white;
+	padding: 10px 15px;
+	text-decoration: none;
+}
+
+.header a:hover {
+	background-color: #111;
+}
+
+.white {
+	color: gray;
+	padding: 10px 15px;
+	text-align: center;
+}
+
+h1 {
+	color: orange;
+}
+
+p {
+	color: white;
+}
+
+select {
+	width: 200px;
+}
+
+.dikt {
+	padding: 0px 0px 10px 0px;
+}
+
+.dikt+.dikt {
+	border-top: 1px solid black;
+}
