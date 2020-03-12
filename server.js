@@ -250,7 +250,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 // Sjekker hvilken bruker som er logget inn
 app.get('/diktsamling/sesjon', (req, res) =>
 {
-	res.send(`"epostadresse":"${req.email}"`)
+	res.send(`{"epostadresse":"${req.email}"}`)
 })
 
 // Utlogging
