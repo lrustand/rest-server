@@ -264,6 +264,7 @@ app.delete('/diktsamling/sesjon/', (req, res) =>
 			{}, (err, result) =>
 		{
 			if (err) throw err
+			res.clearCookie('Session');
 			res.send("Successfully logged out")
 		})
 	}
