@@ -11,6 +11,12 @@ function getUrl(url, func) {
 	xhttp.send()
 }
 
+// Legger til header
+document.body.innerHTML =
+`<ul id="header">
+	<li><a href="index.html">Hjem</a></li>
+</ul>`
+
 // Fyller header med inn/utloggingsdetaljer osv
 getUrl("/diktsamling/sesjon", function(xhttp) {
 	var email = JSON.parse(xhttp.responseText).epostadresse
