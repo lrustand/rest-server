@@ -11,7 +11,7 @@ body, html{
 	margin: 20px;
 }
 
-.header {
+#header {
 	position: sticky;
 	top: 0;
 	left: 0;
@@ -24,18 +24,18 @@ body, html{
 	text-align: center;
 }
 
-.header li {
+#header li {
 	float: left;
 }
 
-.header a {
+#header a {
 	display: block;
 	color: white;
 	padding: 10px 15px;
 	text-decoration: none;
 }
 
-.header a:hover {
+#header a:hover {
 	background-color: #111;
 }
 
