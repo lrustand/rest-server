@@ -6,7 +6,6 @@ const diktid = queryString.get("diktid")
 if (diktid != null) {
 	getUrl("/diktsamling/dikt/"+diktid, function(xhttp) {
 		JSON.parse(xhttp.responseText).forEach(function (dikt, index) {
-			console.log(dikt)
 			var out = "<div class='dikt'>"
 			out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
 			out += dikt.dikt
