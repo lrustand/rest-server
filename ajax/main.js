@@ -17,21 +17,29 @@ function AJAXRequest(method, url, data, func) {
 	}
 }
 
+
+
 // Wrapper for asynkrone AJAX get requests
 function getUrl(url, func) {
 	AJAXRequest("GET", url, null, func)
 }
+
+
 
 // Wrapper for asynkrone AJAX post requests
 function postUrl(url, data, func) {
 	AJAXRequest("POST", url, data, func)
 }
 
+
+
 // Legger til header
 document.body.innerHTML =
 `<ul id="header">
 	<li><a href="index.html">Hjem</a></li>
 </ul>`
+
+
 
 // Fyller header med inn/utloggingsdetaljer osv
 getUrl("/diktsamling/sesjon", function(xhttp) {
@@ -51,6 +59,8 @@ getUrl("/diktsamling/sesjon", function(xhttp) {
 	}
 })
 
+
+
 // Send inn innloggingsdetaljer til rest api
 function login() {
 	var data = {}
@@ -64,6 +74,8 @@ function login() {
 	})
 	return false
 }
+
+
 
 // Logger ut av rest api
 function logout() {
