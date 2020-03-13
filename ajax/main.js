@@ -66,7 +66,7 @@ function refreshHeader() {
 // Setter inn header
 document.body.innerHTML += `
 		<ul id="header">
-			<li id="btnHome"><a href="index.html">Hjem</a></li>
+			<li id="btnHome"><a href="vis_dikt.html">Hjem</a></li>
 			<li id="btnLogin" style='float:right; display:none'><a href='login.html'>Logg inn</a></li>
 			<li id="btnLogout" style='float:right; display:none'><button onclick='logout()'>Logg ut</button></li>
 			<li id="txtLoggedInAs" style='float:right' class='white'></li>
