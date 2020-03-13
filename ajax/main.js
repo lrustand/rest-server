@@ -44,12 +44,14 @@ function refreshHeader() {
 		var txtLoggedInAs = document.getElementById("txtLoggedInAs")
 		var btnLogin = document.getElementById("btnLogin")
 		var btnLogout = document.getElementById("btnLogout")
+		var btnMyPoems = document.getElementById("btnMyPoems")
 
 		// Ikke logget inn
 		if (email == "null" || email == null) {
 			txtLoggedInAs.innerHTML = "Ikke logget inn"
 			btnLogin.style.display = "block"
 			btnLogout.style.display = "none"
+			btnMyPoems.style.display = "none"
 		}
 
 		// Logget inn
@@ -57,6 +59,7 @@ function refreshHeader() {
 			txtLoggedInAs.innerHTML = "Logget inn som " + email
 			btnLogin.style.display = "none"
 			btnLogout.style.display = "block"
+			btnMyPoems.style.display = "block"
 		}
 	})
 }
@@ -67,6 +70,7 @@ function refreshHeader() {
 document.body.innerHTML += `
 		<ul id="header">
 			<li id="btnHome"><a href="vis_dikt.html">Hjem</a></li>
+			<li id="btnMyPoems"><a href="mine_dikt.html">Mine dikt</a></li>
 			<li id="btnLogin" style='float:right; display:none'><a href='login.html'>Logg inn</a></li>
 			<li id="btnLogout" style='float:right; display:none'><button onclick='logout()'>Logg ut</button></li>
 			<li id="txtLoggedInAs" style='float:right' class='white'></li>
