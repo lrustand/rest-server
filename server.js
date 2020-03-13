@@ -109,7 +109,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 	// Bare la innloggede brukere laste opp dikt
 	if (req.email == null)
 	{
-		res.status(400)
+		res.status(401)
 		return
 	}
 
@@ -130,7 +130,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 	{
 		if (err)
 		{
-			res.status(400)
+			res.status(500)
 			return console.error(err.message)
 		}
 
@@ -173,7 +173,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 {
 	if (req.email == null)
 	{
-		res.status(400)
+		res.status(401)
 		return
 	}
 	db.run(`DELETE FROM dikt WHERE epostadresse = "${req.email}"`,
@@ -198,6 +198,12 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 app.delete('/diktsamling/dikt/*', (req, res) =>
 	{
 	var diktid = req.params[0]
+
+	if (req.email == null)
+	{
+		res.status(401)
+		return
+	}
 
 	// Sjekker at diktid er numerisk
 	if (diktid.search(/[^0-9]/g) != -1) return
