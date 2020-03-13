@@ -3,7 +3,7 @@
 function getUrl(url, func) {
 	var xhttp = new XMLHttpRequest()
 	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState == 4) {
 			func(this)
 		}
 	}
@@ -15,7 +15,7 @@ function getUrl(url, func) {
 function postUrl(url, data, func) {
 	var xhttp = new XMLHttpRequest()
 	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState == 4) {
 			func(this)
 		}
 	}
