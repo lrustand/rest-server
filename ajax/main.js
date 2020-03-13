@@ -33,36 +33,44 @@ function postUrl(url, data, func) {
 
 
 
-// Legger til header
-document.body.innerHTML +=
-`<ul id="header">
-</ul>`
-
-
-
 // Oppdaterer header
 function refreshHeader() {
 	// Fyller header med inn/utloggingsdetaljer osv
 	getUrl("/diktsamling/sesjon", function(xhttp) {
 		var email = JSON.parse(xhttp.responseText).epostadresse
 		var header = document.getElementById("header")
-		var newheader = '<li><a href="index.html">Hjem</a></li>'
+		var newheader = ""
+
+		var txtLoggedIn = document.getElementById("txtLoggedInAs")
+		var btnLogin = document.getElementById("btnLogin")
+		var btnLogout = document.getElementById("btnLogout")
 
 		// Ikke logget inn
 		if (email == "null" || email == null) {
-			newheader += "<li style='float:right'><a href='login.html'>Logg inn</a></li>"
-			newheader += "<li style='float:right' class='white'>Ikke innlogget</li>"
+			txtLoggedIn.innerHTML = "Ikke logget inn"
+			btnLogin.style.display = "block"
+			btnLogout.style.display = "none"
 		}
 
 		// Logget inn
 		else {
-			newheader += "<li style='float:right'><button onclick='logout()'>Logg ut</button></li>"
-			newheader += "<li style='float:right' class='white'>Logget inn som " + email + "</li>"
+			txtLoggedInAs.innerHTML = "Logget inn som " + email
+			btnLogin.style.display = "none"
+			btnLogout.style.display = "block"
 		}
-
-		header.innerHTML = newheader
 	})
 }
+
+
+
+// Setter inn header
+document.body.innerHTML += `
+		<ul id="header">
+			<li id="btnHome"><a href="index.html">Hjem</a></li>
+			<li id="btnLogin" style='float:right; display:none'><a href='login.html'>Logg inn</a></li>
+			<li id="btnLogout" style='float:right; display:none'><button onclick='logout()'>Logg ut</button></li>
+			<li id="txtLoggedInAs" style='float:right' class='white'></li>
+		</ul>`
 refreshHeader()
 
 
