@@ -225,13 +225,28 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 // Innlogging
 app.post('/diktsamling/sesjon/', (req, res) =>
 {
-	var username = req.body.username
-	var password = req.body.password
+	try
+	{
+		var username = req.body.username
+		var password = req.body.password
+	}
+	catch(err)
+	{
+		res.status(401)
+		res.send()
+		return
+	}
 	db.get(`SELECT passordhash FROM bruker `
 		+ `WHERE epostadresse="${username}"`,
 		{}, (err, result) =>
 	{
 		if (err) throw err
+		if (result == null)
+		{
+			res.status(401)
+			res.send()
+			return
+		}
 		if (password == result.passordhash)
 		{
 			var session = crypto.randomBytes(16).toString('base64')
@@ -241,7 +256,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 		}
 		else
 		{
-			res.status(403)
+			res.status(401)
 			res.send("")
 		}
 	})
