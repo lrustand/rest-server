@@ -41,13 +41,13 @@ function refreshHeader() {
 		var header = document.getElementById("header")
 		var newheader = ""
 
-		var txtLoggedIn = document.getElementById("txtLoggedInAs")
+		var txtLoggedInAs = document.getElementById("txtLoggedInAs")
 		var btnLogin = document.getElementById("btnLogin")
 		var btnLogout = document.getElementById("btnLogout")
 
 		// Ikke logget inn
 		if (email == "null" || email == null) {
-			txtLoggedIn.innerHTML = "Ikke logget inn"
+			txtLoggedInAs.innerHTML = "Ikke logget inn"
 			btnLogin.style.display = "block"
 			btnLogout.style.display = "none"
 		}
