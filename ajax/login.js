@@ -9,6 +9,7 @@ function login() {
 	postUrl("/diktsamling/sesjon", data, function(xhttp) {
 		if (xhttp.status == 200) {
 			refreshHeader()
+			location.href = document.referrer
 		}
 	})
 	return false
