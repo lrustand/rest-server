@@ -46,7 +46,7 @@ getUrl("/diktsamling/sesjon", function(xhttp) {
 
 	// Logget inn
 	else {
-		header.innerHTML += "<li style='float:right'><a href='logout.html'>Logg ut</a></li>"
+		header.innerHTML += "<li style='float:right'><button onclick='logout()'>Logg ut</button></li>"
 		header.innerHTML += "<li style='float:right' class='white'>Logget inn som " + email + "</li>"
 	}
 })
@@ -63,4 +63,10 @@ function login() {
 		}
 	})
 	return false
+}
+
+// Logger ut av rest api
+function logout() {
+	AJAXRequest("DELETE", "/diktsamling/sesjon", null, function (xhttp) {
+	})
 }

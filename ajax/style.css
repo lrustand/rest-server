@@ -39,6 +39,20 @@ body, html{
 	background-color: #111;
 }
 
+#header button {
+	background: none;
+	border: none;
+	display: block;
+	color: white;
+	padding: 10px 15px;
+	text-decoration: none;
+}
+
+#header button:hover {
+	background-color: #111;
+	cursor: pointer;
+}
+
 .white {
 	color: gray;
 	padding: 10px 15px;
