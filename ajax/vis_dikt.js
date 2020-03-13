@@ -5,15 +5,14 @@ const diktid = queryString.get("diktid")
 // Viser dikt spesifisert i query string (?diktid=)
 if (diktid != null) {
 	getUrl("/diktsamling/dikt/"+diktid, function(xhttp) {
-		JSON.parse(xhttp.responseText).forEach(function (dikt, index) {
-			var out = "<div class='dikt'>"
-			out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
-			out += dikt.dikt
-			out += "<br>"
-			out += "<p><i>- "+dikt.fornavn+" "+dikt.etternavn+"<i><p>"
-			out += "</div>"
-			document.getElementsByClassName("main")[0].innerHTML += out
-		})
+		var dikt = JSON.parse(xhttp.responseText)[0]
+		var out = "<div class='dikt'>"
+		out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
+		out += dikt.dikt
+		out += "<br>"
+		out += "<p><i>- "+dikt.fornavn+" "+dikt.etternavn+"<i><p>"
+		out += "</div>"
+		document.getElementsByClassName("main")[0].innerHTML += out
 	})
 }
 
