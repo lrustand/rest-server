@@ -34,31 +34,36 @@ function postUrl(url, data, func) {
 
 
 // Legger til header
-document.body.innerHTML =
+document.body.innerHTML +=
 `<ul id="header">
-	<li><a href="index.html">Hjem</a></li>
 </ul>`
 
 
 
-// Fyller header med inn/utloggingsdetaljer osv
-getUrl("/diktsamling/sesjon", function(xhttp) {
-	var email = JSON.parse(xhttp.responseText).epostadresse
-	var header = document.getElementById("header")
+// Oppdaterer header
+function refreshHeader() {
+	// Fyller header med inn/utloggingsdetaljer osv
+	getUrl("/diktsamling/sesjon", function(xhttp) {
+		var email = JSON.parse(xhttp.responseText).epostadresse
+		var header = document.getElementById("header")
+		var newheader = '<li><a href="index.html">Hjem</a></li>'
 
-	// Ikke logget inn
-	if (email == "null" || email == null) {
-		header.innerHTML += "<li style='float:right'><a href='login.html'>Logg inn</a></li>"
-		header.innerHTML += "<li style='float:right' class='white'>Ikke innlogget</li>"
-	}
+		// Ikke logget inn
+		if (email == "null" || email == null) {
+			newheader += "<li style='float:right'><a href='login.html'>Logg inn</a></li>"
+			newheader += "<li style='float:right' class='white'>Ikke innlogget</li>"
+		}
 
-	// Logget inn
-	else {
-		header.innerHTML += "<li style='float:right'><button onclick='logout()'>Logg ut</button></li>"
-		header.innerHTML += "<li style='float:right' class='white'>Logget inn som " + email + "</li>"
-	}
-})
+		// Logget inn
+		else {
+			newheader += "<li style='float:right'><button onclick='logout()'>Logg ut</button></li>"
+			newheader += "<li style='float:right' class='white'>Logget inn som " + email + "</li>"
+		}
 
+		header.innerHTML = newheader
+	})
+}
+refreshHeader()
 
 
 // Send inn innloggingsdetaljer til rest api
@@ -70,6 +75,7 @@ function login() {
 
 	postUrl("/diktsamling/sesjon", data, function(xhttp) {
 		if (xhttp.status == 200) {
+			refreshHeader()
 		}
 	})
 	return false
@@ -80,5 +86,6 @@ function login() {
 // Logger ut av rest api
 function logout() {
 	AJAXRequest("DELETE", "/diktsamling/sesjon", null, function (xhttp) {
+		refreshHeader()
 	})
 }
