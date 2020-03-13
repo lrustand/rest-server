@@ -13,12 +13,3 @@ function login() {
 	})
 	return false
 }
-
-
-
-// Logger ut av rest api
-function logout() {
-	AJAXRequest("DELETE", "/diktsamling/sesjon", null, function (xhttp) {
-		refreshHeader()
-	})
-}
