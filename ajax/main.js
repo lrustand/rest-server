@@ -20,6 +20,7 @@ function postUrl(url, data, func) {
 		}
 	}
 	xhttp.open("POST", url, true)
+	xhttp.setRequestHeader("Content-Type","application/json")
 	xhttp.send(JSON.stringify(data))
 }
 
