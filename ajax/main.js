@@ -1,27 +1,30 @@
 
-// Wrapper for asynkrone AJAX get requests
-function getUrl(url, func) {
+// Wrapper for AJAX requests
+function AJAXRequest(method, url, data, func) {
 	var xhttp = new XMLHttpRequest()
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4) {
 			func(this)
 		}
 	}
-	xhttp.open("GET", url, true)
-	xhttp.send()
+	xhttp.open(method, url, true)
+	if (data != null) {
+		xhttp.setRequestHeader("Content-Type","application/json")
+		xhttp.send(JSON.stringify(data))
+	}
+	else {
+		xhttp.send()
+	}
+}
+
+// Wrapper for asynkrone AJAX get requests
+function getUrl(url, func) {
+	AJAXRequest("GET", url, null, func)
 }
 
 // Wrapper for asynkrone AJAX post requests
 function postUrl(url, data, func) {
-	var xhttp = new XMLHttpRequest()
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-			func(this)
-		}
-	}
-	xhttp.open("POST", url, true)
-	xhttp.setRequestHeader("Content-Type","application/json")
-	xhttp.send(JSON.stringify(data))
+	AJAXRequest("POST", url, data, func)
 }
 
 // Legger til header
