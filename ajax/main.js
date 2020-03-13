@@ -11,6 +11,18 @@ function getUrl(url, func) {
 	xhttp.send()
 }
 
+// Wrapper for asynkrone AJAX post requests
+function postUrl(url, data, func) {
+	var xhttp = new XMLHttpRequest()
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			func(this)
+		}
+	}
+	xhttp.open("POST", url, true)
+	xhttp.send(JSON.stringify(data))
+}
+
 // Legger til header
 document.body.innerHTML =
 `<ul id="header">
