@@ -141,6 +141,13 @@ app.post('/diktsamling/dikt/', (req, res) =>
 // Endre et allerede eksisterende dikt
 app.put('/diktsamling/dikt/*', (req, res) =>
 {
+	// Bare la innloggede brukere endre dikt
+	if (req.email == null)
+	{
+		res.status(401)
+		return
+	}
+
 	// Dekoder dikt for å tillate spesialtegn med %
 	var dikt = decodeURIComponent(req.body.dikt);
 	var diktid = req.params[0]
@@ -238,7 +245,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 	}
 	catch(err)
 	{
-		res.status(401)
+		res.status(400)
 		res.send()
 		return
 	}
