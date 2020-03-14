@@ -74,6 +74,10 @@ app.get('/diktsamling/dikt/*', (req, res) =>
 		+ `WHERE diktid='${diktid}'`,
 		(err, rows) =>
 	{
+		if (rows.length <= 0)
+		{
+			res.status(404)
+		}
 		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
