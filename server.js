@@ -90,6 +90,8 @@ app.get('/diktsamling/bruker/', (req, res) =>
 {
 	if (req.email == null)
 	{
+		res.setHeader("Content-Type", "application/json")
+		res.status(401)
 		res.send("[]")
 		return
 	}
