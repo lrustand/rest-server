@@ -31,7 +31,7 @@ app.use((req, res, next) =>
 	db.get(`SELECT epostadresse FROM sesjon WHERE sesjonsid="${session}"`,
 		{}, (err, result) =>
 	{
-		if (err) throw err
+		if (err) return internalError(res, err)
 		req.email = null
 		if (result != null)
 		{
@@ -41,6 +41,14 @@ app.use((req, res, next) =>
 	})
 })
 
+
+// Handling av interne feil
+function internalError(res, err)
+{
+	res.status(500)
+	res.send()
+	console.err(err)
+}
 
 // GET request til diktdatabase
 // Henter alle dikt
@@ -52,6 +60,7 @@ app.get('/diktsamling/dikt/', (req, res) =>
 		+ `ON dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
+		if (err) return internalError(res, err)
 		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
@@ -74,6 +83,7 @@ app.get('/diktsamling/dikt/*', (req, res) =>
 		+ `WHERE diktid='${diktid}'`,
 		(err, rows) =>
 	{
+		if (err) return internalError(res, err)
 		if (rows.length <= 0)
 		{
 			res.status(404)
@@ -103,6 +113,7 @@ app.get('/diktsamling/bruker/', (req, res) =>
 		+ `dikt.epostadresse=bruker.epostadresse`,
 		(err, rows) =>
 	{
+		if (err) return internalError(res, err)
 		var response = JSON.stringify(rows, null, 4)
 		res.setHeader("Content-Type", "application/json")
 		res.send(response)
@@ -134,11 +145,7 @@ app.post('/diktsamling/dikt/', (req, res) =>
 		+ `)`,
 		(err) =>
 	{
-		if (err)
-		{
-			res.status(500)
-			return console.error(err.message)
-		}
+		if (err) return internalError(res, err)
 
 		res.send()
 	})
@@ -166,7 +173,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 		+ `AND epostadresse="${req.email}"`,
 		function (err)
 	{
-		if (err) return console.error(err.message)
+		if (err) return internalError(res, err)
 
 		if(this.changes > 0)
 		{
@@ -192,7 +199,7 @@ app.delete('/diktsamling/dikt/', (req, res) =>
 	db.run(`DELETE FROM dikt WHERE epostadresse = "${req.email}"`,
 		function (err)
 	{
-		if (err) return console.error(err.message)
+		if (err) return internalError(res, err)
 
 		if(this.changes > 0)
 		{
@@ -226,7 +233,7 @@ app.delete('/diktsamling/dikt/*', (req, res) =>
 		+ `AND epostadresse="${req.email}"`,
 		function (err)
 	{
-		if (err) return console.error(err.message)
+		if (err) return internalError(res, err)
 
 		if(this.changes > 0)
 		{
@@ -259,7 +266,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 		+ `WHERE epostadresse="${username}"`,
 		{}, (err, result) =>
 	{
-		if (err) throw err
+		if (err) return internalError(res, err)
 		if (result == null)
 		{
 			res.status(401)
@@ -297,7 +304,7 @@ app.delete('/diktsamling/sesjon/', (req, res) =>
 			+ `WHERE sesjonsid='${req.cookies.Session}'`,
 			{}, (err, result) =>
 		{
-			if (err) throw err
+			if (err) return internalError(res, err)
 			res.clearCookie('Session');
 			res.send("Successfully logged out")
 		})
