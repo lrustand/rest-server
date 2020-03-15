@@ -97,3 +97,11 @@ function showError(msg) {
 	const main = document.getElementsByClassName("main")[0]
 	main.innerHTML += `<b style="color:red">${msg}</b>`
 }
+
+
+
+// Funksjon for å vise meldinger til bruker
+function showMessage(msg) {
+	const main = document.getElementsByClassName("main")[0]
+	main.innerHTML += `<b>${msg}</b>`
+}
