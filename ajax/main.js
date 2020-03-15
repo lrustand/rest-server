@@ -89,3 +89,11 @@ function logout() {
 		refreshHeader()
 	})
 }
+
+
+
+// Funksjon for å vise feilmeldinger til bruker
+function showError(msg) {
+	const main = document.getElementsByClassName("main")[0]
+	main.innerHTML += `<b style="color:red">${msg}</b>`
+}
