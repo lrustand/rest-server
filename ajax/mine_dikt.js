@@ -7,6 +7,7 @@ getUrl("/diktsamling/bruker", function(xhttp) {
 		row += dikt.dikt
 		row += "<br><br>"
 		row += `<button onclick="slettDikt(${dikt.diktid});">Slett</button>`
+		row += `<button onclick="window.location.href='endre_dikt.html?diktid=${dikt.diktid}';">Endre</button>`
 		row += "</div>"
 		document.getElementsByClassName("main")[0].innerHTML += row
 	})
