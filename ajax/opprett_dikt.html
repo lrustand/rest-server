@@ -6,10 +6,11 @@
 		<script src="main.js"></script>
 		<script src="opprett_dikt.js"></script>
 		<div class="main">
-			<form onsubmit="opprettDikt();" action="javascript:void(0);">
+			<form action="javascript:void(0);">
 				<textarea id='dikt' name='dikt' rows='10' cols='30' placeholder='Skriv dikt her'></textarea>
 				<br>
-				<input type='submit' value='Opprett dikt'>
+				<input type='button' onclick="opprettDikt();" value='Last opp'>
+				<input type='button' onclick="window.location.href=document.referrer;" value='Avbryt'>
 			</form>
 		</div>
 	</body>
