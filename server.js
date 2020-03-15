@@ -158,6 +158,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	if (req.email == null)
 	{
 		res.status(401)
+		res.send()
 		return
 	}
 
@@ -166,7 +167,12 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 	var diktid = req.params[0]
 
 	// Sjekker at diktid er numerisk
-	if (diktid.search(/[^0-9]/g) != -1) return
+	if (diktid.search(/[^0-9]/g) != -1)
+	{
+		res.status(400)
+		res.send()
+		return
+	}
 
 	db.run(`UPDATE dikt SET dikt=${SqlString.escape(dikt)} `
 		+ `WHERE diktid="${diktid}" `
@@ -183,6 +189,7 @@ app.put('/diktsamling/dikt/*', (req, res) =>
 		else
 		{
 			res.status(404)
+			res.send()
 			console.log(`\t404 ${req.path} not found`)
 		}
 	})
