@@ -13,7 +13,11 @@ getUrl("/diktsamling/bruker", function(xhttp) {
 			row += "</div>"
 			main.innerHTML += row
 		})
-		if (mine_dikt.length <= 0) {
+		if (mine_dikt.length > 0) {
+			main.innerHTML += "<br><hr><br>"
+			main.innerHTML += "<button onclick='slettAlleDikt();'>Slett alle mine dikt</button>"
+		}
+		else {
 			showMessage("Du har ingen dikt. Opprett et dikt for å se det her")
 		}
 	}
@@ -33,6 +37,18 @@ function slettDikt(diktid) {
 			if (xhttp.status == 200) {
 				var dikt = document.getElementById(`dikt_${diktid}`)
 				dikt.parentElement.removeChild(dikt)
+			}
+		})
+	}
+}
+
+
+function slettAlleDikt(diktid) {
+	var ans = confirm(`Er du helt sikker på at du vil slette alle diktene dine?`)
+	if (ans) {
+		AJAXRequest("DELETE", "/diktsamling/dikt", null, function(xhttp) {
+			if (xhttp.status == 200) {
+				location.reload();
 			}
 		})
 	}
