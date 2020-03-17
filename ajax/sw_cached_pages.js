@@ -1,4 +1,4 @@
-const cacheName = 'v3'
+const cacheName = 'v4'
 
 const cacheAssets = [
 	'/ajax/endre_dikt.html',
@@ -19,41 +19,28 @@ const cacheAssets = [
 	'/diktsamling/bruker'
 ]
 
-function install_cache(caches)
-{
-	caches
-		.open(cacheName)
-		.then(cache => {
-			console.log('Service Worker: Caching Files')
-			cache.addAll(cacheAssets)
+self.addEventListener('install', function(event) {
+    event.waitUntil(
+		caches.open(cacheName).then( function (cache) {
+			cacheAssets.forEach(url => cache.add(url))
 
-			// Leg til alle vis dikt responser
-			// cache.match('/diktsamling/dikt/').then(function(dikt) {
-			//	console.log(dikt.body)
-			// })
-		})
-		.then(() => self.skipWaiting())
-}
-
-// Call Install Event
-self.addEventListener('install', (e) => {
-	console.log('Service Worker: Installed')
-
-	e.waitUntil(
-		caches.keys().then(cacheNames => {
-			return Promise.all(
-				cacheNames.map(cache => {
-					console.log(cache)
-					if(cache !== cacheName) {
-						install_cache(caches)
-					}
+			// Henter liste over alle dikt og cacher diktsider
+			fetch("/diktsamling/dikt")
+			.then(res => res.json())
+			.then(data => alle_dikt = data)
+			.then(() => {
+				alle_dikt.forEach(dikt => {
+					// Cacher alle sider relatert til denne diktid
+					cache.add(`/diktsamling/dikt/${dikt.diktid}`)
+					cache.add(`/ajax/vis_dikt.html?diktid=${dikt.diktid}`)
+					cache.add(`/ajax/endre_dikt.html?diktid=${dikt.diktid}`)
 				})
-			).catch(install_cache(caches))
+			})
 		})
 	)
-})
+});
 
-// Call Acitvate Event
+// Call Activate Event
 self.addEventListener('activate', (e) => {
 	console.log('Service Worker: Activated')
 	// Remove unwanted caches
@@ -74,6 +61,18 @@ self.addEventListener('activate', (e) => {
 // Call Fetch Event
 self.addEventListener('fetch', (e) => {
 	console.log('Service Worker: Fetching')
-	e.respondWith(fetch(e.request).catch(() => caches.match(e.request)))
+	e.respondWith(
+		fetch(e.request)
+			.then(res => {
+				// Make clone of response
+				const resClone = res.clone()
+				// Open cache
+				caches.open(cacheName).then(cache => {
+					// Add response to cache
+					cache.put(e.request, resClone)
+				})
+				return res
+			})
+			.catch(err => caches.match(e.request).then(res => res))
+	)
 })
-
