@@ -5,14 +5,24 @@ const diktid = queryString.get("diktid")
 // Viser dikt spesifisert i query string (?diktid=)
 if (diktid != null) {
 	getUrl("/diktsamling/dikt/"+diktid, function(xhttp) {
-		var dikt = JSON.parse(xhttp.responseText)[0]
-		var out = "<div class='dikt'>"
-		out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
-		out += dikt.dikt
-		out += "<br>"
-		out += "<p><i>- "+dikt.fornavn+" "+dikt.etternavn+"<i><p>"
-		out += "</div>"
-		document.getElementsByClassName("main")[0].innerHTML += out
+		var main = document.getElementsByClassName("main")[0]
+		if (xhttp.status == 200) {
+			var dikt = JSON.parse(xhttp.responseText)[0]
+			var out = "<div class='dikt'>"
+			out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
+			out += dikt.dikt
+			out += "<br>"
+			out += "<p><i>- "+dikt.fornavn+" "+dikt.etternavn+"<i><p>"
+			out += "</div>"
+			main.innerHTML += out
+		}
+		else if (status == 404) {
+			showError("Dette diktet finnes ikke.")
+		}
+		else {
+			showError("En ukjent feil oppsto. Prøv igjen senere")
+		}
+
 	})
 }
 
