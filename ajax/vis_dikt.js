@@ -10,7 +10,11 @@ if (diktid != null) {
 			var dikt = JSON.parse(xhttp.responseText)[0]
 			var out = "<div class='dikt'>"
 			out += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
-			out += dikt.dikt
+			out += "<pre>"
+				+dikt.dikt
+					.replace(/\\n/g, "\n")
+					.replace(/\+/g, " ")
+				+"</pre>"
 			out += "<br>"
 			out += "<p><i>- "+dikt.fornavn+" "+dikt.etternavn+"<i><p>"
 			out += "</div>"

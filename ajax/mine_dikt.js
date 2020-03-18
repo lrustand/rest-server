@@ -6,7 +6,11 @@ getUrl("/diktsamling/bruker", function(xhttp) {
 		mine_dikt.forEach(function (dikt, index) {
 			var row = `<div class="dikt" id="dikt_${dikt.diktid}">`
 			row += `<h3><a href=vis_dikt.html?diktid=${dikt.diktid}>Dikt #${dikt.diktid}</a></h3>`
-			row += dikt.dikt
+			row += "<pre>"
+				+dikt.dikt
+					.replace(/\\n/g, "\n")
+					.replace(/\+/g, " ")
+				+"</pre>"
 			row += "<br><br>"
 			row += `<button onclick="slettDikt(${dikt.diktid});">Slett</button>`
 			row += `<button onclick="window.location.href='endre_dikt.html?diktid=${dikt.diktid}';">Endre</button>`

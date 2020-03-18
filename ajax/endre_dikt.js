@@ -3,6 +3,7 @@ const diktid = queryString.get("diktid")
 getUrl(`/diktsamling/dikt/${diktid}`, function(xhttp) {
 	var diktInnhold = JSON.parse(xhttp.responseText)[0].dikt
 	document.getElementById("dikt").value = diktInnhold
+										.replace(/\\n/g, "\n")
 })
 
 function endreDikt() {
