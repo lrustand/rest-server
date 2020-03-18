@@ -27,9 +27,9 @@ CREATE TABLE dikt
 );
 
 INSERT INTO bruker VALUES
-	("test@test.no", "asdlkjwgoijwerge", "test", ""),
-	("test2@test.no", "tlbkjerljwlkjwrr", "test2", ""),
-	("meg", "pass", "meg", "selv");
+	("test@test.no", "5a105e8b9d40e1329780d62ea2265d8a", "test", ""),
+	("test2@test.no", "ad0234829205b9033196ba818f7a872b", "test2", ""),
+	("meg", "1a1dc91c907325c69271ddf0c944bc72", "meg", "selv");
 
 INSERT INTO dikt VALUES
 	(0, "Sample text\nsample text", "test@test.no"),

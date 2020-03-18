@@ -3,6 +3,7 @@ const sqlite3 = require('sqlite3').verbose()
 const SqlString = require('sqlstring')
 const cookieParser = require('cookie-parser')
 const crypto = require('crypto');
+const md5 = require('md5');
 
 const app = express()
 app.use(cookieParser())
@@ -261,7 +262,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 	try
 	{
 		var username = req.body.username
-		var password = req.body.password
+		var passwordhash = md5(req.body.password)
 	}
 	catch(err)
 	{
@@ -280,7 +281,7 @@ app.post('/diktsamling/sesjon/', (req, res) =>
 			res.send()
 			return
 		}
-		if (password == result.passordhash)
+		if (passwordhash == result.passordhash)
 		{
 			var session = crypto.randomBytes(16).toString('base64')
 			res.cookie("Session", session)

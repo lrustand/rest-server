@@ -11,6 +11,7 @@
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
     "sqlite3": "^4.1.1",
-    "sqlstring": "^2.3.1"
+    "sqlstring": "^2.3.1",
+    "md5": "^2.2.1"
   }
 }
