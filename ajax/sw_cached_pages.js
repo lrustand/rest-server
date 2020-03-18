@@ -14,12 +14,13 @@ const cacheAssets = [
 	'/ajax/style.css',
 	'/ajax/vis_dikt.html',
 	'/ajax/vis_dikt.js',
-	'/diktsamling/sesjon',
 	'/diktsamling/dikt/',
-	'/diktsamling/bruker'
+	'/diktsamling/bruker',
+	'/diktsamling/sesjon'
 ]
 
 self.addEventListener('install', function(event) {
+	console.log('Service Worker: Install')
     event.waitUntil(
 		caches.open(cacheName).then( function (cache) {
 			cacheAssets.forEach(url => cache.add(url))
@@ -58,21 +59,75 @@ self.addEventListener('activate', (e) => {
 	)
 })
 
+
+function doFetch(e) {
+	return fetch(e.request)
+		.then(res => {
+			// Make clone of response
+			const resClone = res.clone()
+			// Open cache
+			caches.open(cacheName).then(cache => {
+				// Add response to cache
+				cache.put(e.request, resClone)
+			})
+			return res
+		})
+		.catch(err => null)
+}
+
+
+// Genererer respons basert på cachet diktdatabase
+function doDynamic(e) {
+	const url = e.request.url
+	var respo = null
+	return caches.match('/diktsamling/dikt/')
+		.then(res =>  res.json())
+		.then(alle_dikt => {
+			// Forespørsler til rest api genereres fra cachet diktdatabase
+			if (url.startsWith('http://127.0.0.1:3000/diktsamling/dikt/')
+				&& url != 'http://127.0.0.1:3000/diktsamling/dikt/') {
+				const diktid = url.split("/")[5]
+				for (a in alle_dikt) {
+					const dikt = alle_dikt[a]
+					if (dikt.diktid == diktid) {
+						return new Response(JSON.stringify([dikt]))
+					}
+				}
+			}
+
+			// Selve html-filene er like selv om diktid forandres
+			if (url.startsWith('http://127.0.0.1:3000/ajax/vis_dikt.html?diktid=')) {
+				return caches.match('/ajax/vis_dikt.html')
+			}
+			if (url.startsWith('http://127.0.0.1:3000/ajax/endre_dikt.html?diktid=')) {
+				return caches.match('/ajax/endre_dikt.html')
+			}
+
+			return null
+		})
+}
+
 // Call Fetch Event
 self.addEventListener('fetch', (e) => {
-	console.log('Service Worker: Fetching')
-	e.respondWith(
-		fetch(e.request)
-			.then(res => {
-				// Make clone of response
-				const resClone = res.clone()
-				// Open cache
-				caches.open(cacheName).then(cache => {
-					// Add response to cache
-					cache.put(e.request, resClone)
-				})
-				return res
-			})
-			.catch(err => caches.match(e.request).then(res => res))
-	)
+	console.log(`Service Worker: Client requested ${e.request.url}`)
+	e.respondWith(async function(){
+		const fetched = await doFetch(e)
+		if (fetched) {
+			console.log("Responding with fetched content")
+			return fetched
+		}
+
+		const dynamic = await doDynamic(e)
+		if (dynamic) {
+			console.log("Responding with dynamic content")
+			return dynamic
+		}
+
+		const cached = caches.match(e.request).then(res => res)
+		if (cached) {
+			console.log("Responding with cached content")
+			return cached
+		}
+
+	}())
 })
