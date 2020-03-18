@@ -79,7 +79,6 @@ function doFetch(e) {
 // Genererer respons basert på cachet diktdatabase
 function doDynamic(e) {
 	const url = e.request.url
-	var respo = null
 	return caches.match('/diktsamling/dikt/')
 		.then(res =>  res.json())
 		.then(alle_dikt => {
