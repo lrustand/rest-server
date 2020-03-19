@@ -129,15 +129,6 @@ function doDynamic(e) {
 					}
 				}
 			}
-
-			// Selve html-filene er like, uavhengig av query string
-			if (url.startsWith('http://127.0.0.1:3000/ajax/vis_dikt.html?')) {
-				return caches.match('/ajax/vis_dikt.html')
-			}
-			if (url.startsWith('http://127.0.0.1:3000/ajax/endre_dikt.html?')) {
-				return caches.match('/ajax/endre_dikt.html')
-			}
-
 			return null
 		})
 }
@@ -156,6 +147,14 @@ self.addEventListener('fetch', (e) => {
 		if (dynamic) {
 			console.log("Responding with dynamic content")
 			return dynamic
+		}
+
+		// Selve html-filene er like, uavhengig av query string
+		if (url.startsWith('http://127.0.0.1:3000/ajax/vis_dikt.html?')) {
+			return caches.match('/ajax/vis_dikt.html')
+		}
+		if (url.startsWith('http://127.0.0.1:3000/ajax/endre_dikt.html?')) {
+			return caches.match('/ajax/endre_dikt.html')
 		}
 
 		const cached = caches.match(e.request).then(res => res)
