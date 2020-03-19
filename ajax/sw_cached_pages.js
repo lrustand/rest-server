@@ -145,25 +145,24 @@ function doDynamic(e) {
 // Call Fetch Event
 self.addEventListener('fetch', (e) => {
 	console.log(`Service Worker: Client requested ${e.request.url}`)
-	const fetched = doFetch(e).then(fetched => fetched)
-	if (fetched) {
-		console.log("Responding with fetched content")
-		e.respondWith(fetched)
-		return
-	}
+	e.respondWith(async function(){
+		const fetched = await doFetch(e)
+		if (fetched) {
+			console.log("Responding with fetched content")
+			return fetched
+		}
 
-	const dynamic = doDynamic(e).then(dynamic => dynamic)
-	if (dynamic) {
-		console.log("Responding with dynamic content")
-		e.respondWith(dynamic)
-		return
-	}
+		const dynamic = await doDynamic(e)
+		if (dynamic) {
+			console.log("Responding with dynamic content")
+			return dynamic
+		}
 
-	const cached = caches.match(e.request).then(res => res)
-	if (cached) {
-		console.log("Responding with cached content")
-		e.respondWith(cached)
-		return
-	}
+		const cached = caches.match(e.request).then(res => res)
+		if (cached) {
+			console.log("Responding with cached content")
+			return cached
+		}
 
+	}())
 })
