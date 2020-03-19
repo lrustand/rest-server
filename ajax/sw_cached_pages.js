@@ -98,11 +98,13 @@ function doFetch(e) {
 				// Add response to cache
 				cache.put(e.request, resClone)
 			})
-			if (e.request.url.startsWith('http://127.0.0.1:3000/diktsamling/dikt/')
-				&& e.request.url != 'http://127.0.0.1:3000/diktsamling/dikt/') {
+			// Oppdater diktlista når man åpner en diktside eller mine dikt
+			if ((e.request.url.startsWith('http://127.0.0.1:3000/diktsamling/dikt/')
+				&& e.request.url != 'http://127.0.0.1:3000/diktsamling/dikt/')
+				|| e.request.url.startsWith('http://127.0.0.1:3000/diktsamling/bruker')) {
 				res.clone().json().then(dikt => {
 					if (dikt != null) {
-						oppdaterDikt(dikt[0])
+						dikt.forEach(dikt => oppdaterDikt(dikt))
 					}
 				})
 			}
